@@ -1,0 +1,92 @@
+﻿@page "/"
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+@*<h1 class="center">@CurrentWord</h1>*@
+
+@if (Width != "")
+{
+    <div class="grid">
+        <table cellpadding="0" cellspacing="0" style="width:@Width;">
+            @for (int row = 0; row < 6; row++) {
+                <tr>
+                    @for (int col = 0; col < 5; col++) {
+                        <td>
+                            <div class="gridcell" style="width:@CellWidth;
+                                                         height:@CellWidth;
+                                                         background-color:@GetLetterColor(row, col);">
+                                @GetLetter(row, col)
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+
+    /*
+    Keyboard HTML and CSS require this license and copyright notice:
+    Copyright (c) 2022 by Gregory Schier (https://codepen.io/gschier/pen/VKgyaY)
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    */
+
+    <div class="keyboard">
+        <div class="keyboard__row">
+            <div @onclick='(() => KeyPress("Q"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("Q");'>Q</div>
+            <div @onclick='(() => KeyPress("W"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("W");'>W</div>
+            <div @onclick='(() => KeyPress("E"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("E");'>E</div>
+            <div @onclick='(() => KeyPress("R"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("R");'>R</div>
+            <div @onclick='(() => KeyPress("T"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("T");'>T</div>
+            <div @onclick='(() => KeyPress("Y"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("Y");'>Y</div>
+            <div @onclick='(() => KeyPress("U"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("U");'>U</div>
+            <div @onclick='(() => KeyPress("I"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("I");'>I</div>
+            <div @onclick='(() => KeyPress("O"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("O");'>O</div>
+            <div @onclick='(() => KeyPress("P"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("P");'>P</div>
+        </div>
+        <br />
+        <div class="keyboard__row">
+            <div @onclick='(() => KeyPress("A"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("A");'>A</div>
+            <div @onclick='(() => KeyPress("S"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("S");'>S</div>
+            <div @onclick='(() => KeyPress("D"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("D");'>D</div>
+            <div @onclick='(() => KeyPress("F"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("F");'>F</div>
+            <div @onclick='(() => KeyPress("G"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("G");'>G</div>
+            <div @onclick='(() => KeyPress("H"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("H");'>H</div>
+            <div @onclick='(() => KeyPress("J"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("J");'>J</div>
+            <div @onclick='(() => KeyPress("K"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("K");'>K</div>
+            <div @onclick='(() => KeyPress("L"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("L");'>L</div>
+
+        </div>
+        <br />
+        <div class="keyboard__row">
+            <div @onclick='(() => KeyPress("Z"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("Z");'>Z</div>
+            <div @onclick='(() => KeyPress("X"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("X");'>X</div>
+            <div @onclick='(() => KeyPress("C"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("C");'>C</div>
+            <div @onclick='(() => KeyPress("V"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("V");'>V</div>
+            <div @onclick='(() => KeyPress("B"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("B");'>B</div>
+            <div @onclick='(() => KeyPress("N"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("N");'>N</div>
+            <div @onclick='(() => KeyPress("M"))' class="key--letter" style='width:@KeyWidth;background-color:@KeyColor("M");'>M</div>
+            <div @onclick='(() => KeyPress("DEL"))' class="key--letter" style='width:@KeyWidth;background-color:red;'>&lt</div>
+        </div>
+        <div class="center" style="padding-top:7px;">
+            @if (ErrorMessage != "")
+            {
+                <div class="center" style="color:red;font-size:x-large;">
+                    @ErrorMessage<span>&nbsp;&nbsp;</span>
+                </div>
+            }
+            @if (PlayAgain)
+            {
+                <button @onclick='ResetGame' class="btn btn-primary">Play Again!</button>
+            }
+            else
+            {
+                <button disabled="@SubmitDisabled" 
+                    @onclick='(() => KeyPress("ENTER"))' 
+                    class="btn btn-primary" style="height:2.8em;">Submit Word</button>
+            }
+        </div>
+    </div>
+    <br />
+}
