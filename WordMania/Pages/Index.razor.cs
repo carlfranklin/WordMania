@@ -334,10 +334,8 @@
 
                     // remove the letter from our search word
                     var index = leftInWord.IndexOf(guessLetter);
-                    if (index == 0)
-                        leftInWord = leftInWord.Substring(1);
-                    else if (index > 0)
-                        leftInWord = leftInWord.Substring(0, index) + leftInWord.Substring(index + 1);
+                    if (index != -1)
+                        leftInWord = leftInWord.Remove(index, 1);
                 }
 
             }
@@ -371,10 +369,8 @@
 
                 // remove the letter from our search word
                 var index = leftInWord.IndexOf(guessLetter);
-                if (index == 0)
-                    leftInWord = leftInWord.Substring(1);
-                else if (index > 0)
-                    leftInWord = leftInWord.Substring(0, index) + leftInWord.Substring(index + 1);
+                if (index != -1)
+                    leftInWord = leftInWord.Remove(index, 1);
             }
 
             return deadLetters;
