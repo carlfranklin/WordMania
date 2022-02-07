@@ -245,29 +245,46 @@
             var index = RandomNumberGenerator.GetInt32(AllWords!.Length - 1);
             return AllWords[index];
         }
+        
+        [JSInvokable]
+        public async Task Resize(WindowDimension Size)
+        {
+            // Ensure a good width to height ratio
+            var maxWidth = Size.Height * .55;
+            if (Size.Width > maxWidth)
+            {
+                Size.Width = Convert.ToInt32(maxWidth);
+            }
+
+            // shave off some of the page width to get the grid width
+            int width = Size.Width - Convert.ToInt32((Size.Width * .2));
+
+            // shave off less of the page width to get the keyboard width
+            int keyboardWidth = Size.Width - Convert.ToInt32((Size.Width * .1));
+
+            // The Width string is used to set the table width
+            Width = width.ToString() + "px";
+
+            // each cell is 1/5th of the grid width
+            CellWidth = (width / 5).ToString() + "px";
+
+            // each key in the keyboard is 1/11th the keyboardWidth width
+            KeyWidth = (keyboardWidth / 11).ToString() + "px";
+
+            // render
+            await InvokeAsync(StateHasChanged);
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            // Is this the first time we've rendered?
             if (firstRender)
             {
-                // yes. get the dimensions of the screen from JavaScript
-                var dimension = await JS.InvokeAsync<WindowDimension>("getWindowDimensions");
-
-                // shave off some of the page width to get the grid width
-                int width = dimension.Width - Convert.ToInt32((dimension.Width * .2));
-
-                // shave off less of the page width to get the keyboard width
-                int keyboardWidth = dimension.Width - Convert.ToInt32((dimension.Width * .1));
-
-                // The Width string is used to set the table width
-                Width = width.ToString() + "px";
-
-                // each cell is 1/5th of the grid width
-                CellWidth = (width / 5).ToString() + "px";
-
-                // each key in the keyboard is 1/11th the keyboardWidth width
-                KeyWidth = (keyboardWidth / 11).ToString() + "px";
+                // get the dimensions of the screen from JavaScript, passing in this 
+                // component reference so we can handle resize events
+                var size = await JS.InvokeAsync<WindowDimension>("getWindowDimensions",
+                     DotNetObjectReference.Create(this));
+                
+                await Resize(size);
             }
         }
     }

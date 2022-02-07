@@ -12,6 +12,7 @@
 </head>
 
 <body>
+
     <div id="app">Loading...</div>
 
     <div id="blazor-error-ui">
@@ -21,12 +22,35 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script>
-        window.getWindowDimensions = () => {
-            return {
+
+        // used to call back into C#
+        var dotNetObject;
+
+        // called from the first render
+        window.getWindowDimensions = (obj) => {
+            dotNetObject = obj; // save the object reference
+
+            // return window size
+            var size = {
                 width: window.innerWidth,
                 height: window.innerHeight
             };
+            return size;
         };
+
+        // When the window gets resized...
+        window.addEventListener('resize', function () {
+            // we need to use dotNetObject
+            if (dotNetObject != null) {
+                // get the window size
+                var size = {
+                    width: window.innerWidth,
+                    height: window.innerHeight
+                };
+                // call C# Resize function, passing the size
+                dotNetObject.invokeMethodAsync('Resize', size);
+            }
+        });
     </script>
 </body>
 
