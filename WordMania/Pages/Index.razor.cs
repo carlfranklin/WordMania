@@ -211,6 +211,10 @@
         {
             // load the words from the text file into a string
             var wordsString = await Http.GetStringAsync("words.txt");
+
+            //Removes all \r tags read in from the words text file
+            wordsString = wordsString.Replace("\r", string.Empty); 
+
             // convert to string array
             AllWords = wordsString.Split("\n");
             // set up a new game
